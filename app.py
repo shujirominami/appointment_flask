@@ -1,5 +1,6 @@
 from flask import Flask
 from config import DevelopmentConfig
+from dotenv import load_dotenv
 
 # モデルの初期化関数（DB 作成）
 from models.reservation_model import init_db
@@ -11,6 +12,8 @@ def create_app(config_class=DevelopmentConfig):
     開発用・本番用どちらでも config_class を渡して使える。
     """
     app = Flask(__name__, instance_relative_config=True)
+    # .env を読み込む
+    load_dotenv()
 
     # 設定ファイルを読み込む
     app.config.from_object(config_class)
