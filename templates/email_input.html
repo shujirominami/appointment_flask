@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}メールアドレス入力 | 人工内耳センター 予約リクエスト{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h1 class="page-title">メールアドレスの入力</h1>
+
+  <p class="help-text">
+    予約フォームへのリンク（マジックリンク）を、このメールアドレス宛に送信します。
+    受信できるメールアドレスをご入力ください。
+  </p>
+
+  <form method="post" action="{{ url_for('public.email_input') }}" class="form">
+    <label for="email" class="label">メールアドレス</label>
+    <input
+      type="email"
+      id="email"
+      name="email"
+      class="input"
+      placeholder="例：example@gmail.com"
+      autocomplete="email"
+      required
+    >
+
+    <div class="actions">
+      <button type="submit" class="button">マジックリンクを送信</button>
+    </div>
+
+    <p class="note">
+      ※メールが届かない場合は、迷惑メールフォルダもご確認ください。
+    </p>
+  </form>
+</section>
+{% endblock %}
