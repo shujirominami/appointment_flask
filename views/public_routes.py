@@ -112,14 +112,34 @@ def reservation_form(token):
 
         # 簡単なバリデーション（必要に応じて強化）
         errors = []
+        
+        # 氏名
         if not reservation_data["last_name"] or not reservation_data["first_name"]:
             errors.append("お名前（姓・名）を入力してください。")
+            
+        # 生年月日・性別
         if not reservation_data["birth_date"]:
             errors.append("生年月日を入力してください。")
         if not reservation_data["sex"]:
             errors.append("性別を選択してください。")
+            
+        # 第1希望（必須：日付＋スロット）
         if not reservation_data["first_choice_date"]:
             errors.append("第1希望の日付を入力してください。")
+        if not reservation_data["first_choice_time_slot"]:
+            errors.append("第1希望の時間帯を選択してください。")
+
+        # 第2希望（任意だが、日付とスロットはセット）
+        if reservation_data["second_choice_date"] and not reservation_data["second_choice_time_slot"]:
+            errors.append("第2希望は日付を入れた場合、時間帯も選択してください。")
+        if reservation_data["second_choice_time_slot"] and not reservation_data["second_choice_date"]:
+            errors.append("第2希望は時間帯を選んだ場合、日付も入力してください。")
+        # 第3希望（任意だが、日付とスロットはセット）
+        if reservation_data["third_choice_date"] and not reservation_data["third_choice_time_slot"]:
+            errors.append("第3希望は日付を入れた場合、時間帯も選択してください。")
+        if reservation_data["third_choice_time_slot"] and not reservation_data["third_choice_date"]:
+            errors.append("第3希望は時間帯を選んだ場合、日付も入力してください。")
+            
 
         if errors:
             for msg in errors:
