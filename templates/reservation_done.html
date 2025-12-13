@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}予約リクエスト受付完了{% endblock %}
+
+{% block content %}
+<main class="container">
+  <section class="card">
+    <h1 class="page-title">予約リクエストを受け付けました</h1>
+
+    <p class="lead">
+      送信ありがとうございます。内容を確認のうえ、担当者が外来枠を確保し、
+      <strong>入力いただいたメールアドレス</strong>宛に「予約確定」または「再調整のお願い」をご連絡します。
+    </p>
+
+    <div class="notice">
+      <h2 class="notice-title">ご確認ください</h2>
+      <ul class="notice-list">
+        <li>返信までにお時間をいただく場合があります（診療時間内の対応となります）。</li>
+        <li>迷惑メールフォルダに振り分けられることがあります。未着の場合はご確認ください。</li>
+        <li>本フォーム送信時点では、予約はまだ確定していません。</li>
+      </ul>
+    </div>
+
+    <div class="actions">
+      <a class="btn" href="{{ url_for('public.email_input') }}">別の予約リクエストを送る</a>
+    </div>
+  </section>
+</main>
+{% endblock %}
