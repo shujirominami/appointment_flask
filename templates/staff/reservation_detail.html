@@ -1,0 +1,113 @@
+{% extends "staff/base_staff.html" %}
+
+{% block title %}予約詳細 #{{ reservation.id }}{% endblock %}
+
+{% block content %}
+
+<h2>予約詳細</h2>
+
+<p style="margin: .5rem 0 1.5rem;">
+  <a href="{{ url_for('staff.reservation_list') }}">← 一覧に戻る</a>
+</p>
+
+<section class="card">
+  <h3>患者情報</h3>
+  <table class="detail-table">
+    <tr><th>ID</th><td>{{ reservation.id }}</td></tr>
+    <tr><th>メール</th><td>{{ reservation.email }}</td></tr>
+    <tr><th>診察券番号</th><td>{{ reservation.chart_number or "-" }}</td></tr>
+    <tr><th>紹介元医療機関</th><td>{{ reservation.referring_hospital or "-" }}</td></tr>
+    <tr><th>氏名</th><td>{{ reservation.last_name }} {{ reservation.first_name }}</td></tr>
+    <tr><th>氏名カナ</th><td>{{ (reservation.last_name_kana or "") ~ " " ~ (reservation.first_name_kana or "") }}</td></tr>
+    <tr><th>生年月日</th><td>{{ reservation.birth_date or "-" }}</td></tr>
+    <tr><th>性別</th><td>{{ reservation.sex or "-" }}</td></tr>
+    <tr><th>受付日時</th><td>{{ reservation.created_at }}</td></tr>
+    <tr><th>更新日時</th><td>{{ reservation.updated_at }}</td></tr>
+  </table>
+</section>
+
+<section class="card">
+  <h3>希望日時</h3>
+  <table class="detail-table">
+    <tr>
+      <th>第1希望</th>
+      <td>{{ reservation.first_choice_date or "-" }} / {{ reservation.first_choice_time_slot or "-" }}</td>
+    </tr>
+    <tr>
+      <th>第2希望</th>
+      <td>{{ reservation.second_choice_date or "-" }} / {{ reservation.second_choice_time_slot or "-" }}</td>
+    </tr>
+    <tr>
+      <th>第3希望</th>
+      <td>{{ reservation.third_choice_date or "-" }} / {{ reservation.third_choice_time_slot or "-" }}</td>
+    </tr>
+  </table>
+</section>
+
+<section class="card">
+  <h3>職員対応（更新フォーム）</h3>
+
+  {# flashメッセージ表示 #}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-area">
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <form method="post" class="staff-form">
+    <div class="form-row">
+      <label for="status">ステータス</label>
+      <select id="status" name="status" required>
+        <option value="" {% if not reservation.status %}selected{% endif %}>選択してください</option>
+        <option value="pending" {% if reservation.status == "pending" %}selected{% endif %}>未処理（pending）</option>
+        <option value="confirmed" {% if reservation.status == "confirmed" %}selected{% endif %}>確定（confirmed）</option>
+        <option value="need_reschedule" {% if reservation.status == "need_reschedule" %}selected{% endif %}>再調整（need_reschedule）</option>
+        <option value="cancelled" {% if reservation.status == "cancelled" %}selected{% endif %}>キャンセル（cancelled）</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label for="confirmed_datetime">確定日時（任意）</label>
+      <input
+        id="confirmed_datetime"
+        name="confirmed_datetime"
+        type="text"
+        placeholder="例：2026-01-15 14:30 など"
+        value="{{ reservation.confirmed_datetime or '' }}"
+      >
+      <small class="hint">確定の場合のみ入力する想定です（SQLiteは文字列で保存）。</small>
+    </div>
+
+    <div class="form-row">
+      <label for="handled_by">対応者（任意）</label>
+      <input
+        id="handled_by"
+        name="handled_by"
+        type="text"
+        placeholder="例：南、榎本 など"
+        value="{{ reservation.handled_by or '' }}"
+      >
+    </div>
+
+    <div class="form-row">
+      <label for="staff_note">職員メモ（任意）</label>
+      <textarea
+        id="staff_note"
+        name="staff_note"
+        rows="4"
+        placeholder="再調整理由、患者さんへの連絡内容など"
+      >{{ reservation.staff_note or '' }}</textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">更新する</button>
+      <a class="btn-secondary" href="{{ url_for('staff.reservation_list') }}">一覧へ戻る</a>
+    </div>
+  </form>
+</section>
+
+{% endblock %}
