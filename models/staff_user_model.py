@@ -26,6 +26,7 @@ def init_staff_users_table() -> None:
             name TEXT NOT NULL,
             password_hash TEXT NOT NULL,
             is_active INTEGER DEFAULT 1,
+            is_admin INTEGER DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
         """
