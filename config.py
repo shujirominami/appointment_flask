@@ -47,7 +47,9 @@ class Config:
     MAIL_USE_TLS = env_bool("MAIL_USE_TLS", False)
     MAIL_USERNAME = env_str("MAIL_USERNAME")
     MAIL_PASSWORD = env_str("MAIL_PASSWORD")
-    MAIL_FROM = env_str("MAIL_FROM", MAIL_USERNAME)
+    MAIL_DEFAULT_SENDER = env_str("MAIL_DEFAULT_SENDER", MAIL_USERNAME)
+    
+    MAIL_SUPPRESS_SEND = env_bool("MAIL_SUPPRESS_SEND", False)
 
     # メールに載せるリンクのベースURL（本番は Render のURL）
     APP_BASE_URL = env_str("APP_BASE_URL", "http://127.0.0.1:5000")
@@ -61,6 +63,7 @@ class DevelopmentConfig(Config):
 
     DEBUG = True
     TESTING = False
+    MAIL_SUPPRESS_SEND = False  # 本当に送る場合
 
 
 class ProductionConfig(Config):
