@@ -17,8 +17,13 @@
       <h1 class="staff-title">人工内耳センター 予約管理</h1>
       <nav class="staff-nav">
         <a href="{{ url_for('staff.reservation_list') }}">ダッシュボード</a>
-        <!-- 将来ログアウトを追加する場合 -->
-        <!-- <a href="{{ url_for('staff.logout') }}">ログアウト</a> -->
+
+        {% if current_user.is_authenticated %}
+        <span class="staff-user">
+            {{ current_user.name }} さん
+        </span>
+        <a href="{{ url_for('staff.logout') }}">ログアウト</a>
+        {% endif %}
       </nav>
     </div>
   </header>
