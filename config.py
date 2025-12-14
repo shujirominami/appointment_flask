@@ -72,5 +72,13 @@ class ProductionConfig(Config):
     DEBUG = False
     TESTING = False
 
-    # 本番では SECRET_KEY は必須（未設定なら起動時にエラーにする）
-    SECRET_KEY = os.environ["SECRET_KEY"]
+    @classmethod
+    def validate(cls):
+        """
+        本番起動時に必須環境変数が揃っているかチェック
+        """
+        if "SECRET_KEY" not in os.environ:
+            raise RuntimeError(
+                "SECRET_KEY is not set. "
+                "Please define it as an environment variable."
+            )
