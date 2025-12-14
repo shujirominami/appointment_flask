@@ -37,6 +37,12 @@ def create_app(config_class=DevelopmentConfig):
             return get_staff_user_by_id(int(user_id))
         except (ValueError, TypeError):
             return None
+        
+    # ✅ ここに追加（health check）
+    @app.get("/healthz")
+    def healthz():
+        return "ok", 200    
+        
     # SQLite のファイルは instance/ 配下に置くので、フォルダを作成しておく
     try:
         import os
