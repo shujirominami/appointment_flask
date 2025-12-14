@@ -1,0 +1,57 @@
+{% extends "staff/base_staff.html" %}
+
+{% block title %}職員ログイン{% endblock %}
+
+{% block content %}
+
+<h2>職員ログイン</h2>
+
+{# flashメッセージ表示 #}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-area">
+      {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<section class="card" style="max-width: 520px;">
+  <form method="post" class="staff-form">
+    <div class="form-row">
+      <label for="username">ユーザー名（またはメール）</label>
+      <input
+        id="username"
+        name="username"
+        type="text"
+        autocomplete="username"
+        required
+        value="{{ request.form.get('username','') }}"
+        placeholder="例：staff01 など"
+      >
+    </div>
+
+    <div class="form-row">
+      <label for="password">パスワード</label>
+      <input
+        id="password"
+        name="password"
+        type="password"
+        autocomplete="current-password"
+        required
+        placeholder="パスワードを入力"
+      >
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">ログイン</button>
+    </div>
+
+    <p class="hint" style="margin-top: .8rem;">
+      ※ ログインに失敗する場合は、ユーザー名・パスワードを再確認してください。
+    </p>
+  </form>
+</section>
+
+{% endblock %}
