@@ -5,7 +5,7 @@ from extensions import mail
 
 # モデルの初期化関数（DB 作成）
 from models.reservation_model import init_db
-
+from models.staff_user_model import init_staff_users_table
 
 def create_app(config_class=DevelopmentConfig):
     """
@@ -31,6 +31,10 @@ def create_app(config_class=DevelopmentConfig):
 
     # DB 初期化（テーブル作成など）
     init_db(app)
+    
+    # 職員ユーザー用テーブル作成（staff_users）
+    with app.app_context():        #（current_app を使える状態にする）
+        init_staff_users_table()
 
     # Blueprints（ルーティング）を登録
     from views.public_routes import bp as public_bp
