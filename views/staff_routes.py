@@ -6,7 +6,9 @@ from flask import (
     request,
     flash,
 )
-
+from flask import current_app
+from flask_mail import Message
+from extensions import mail
 from flask_login import login_user, logout_user, login_required, current_user
 from models.staff_user_model import verify_staff_password
 
