@@ -47,7 +47,7 @@ class Config:
     MAIL_USE_TLS = env_bool("MAIL_USE_TLS", False)
     MAIL_USERNAME = env_str("MAIL_USERNAME")
     MAIL_PASSWORD = env_str("MAIL_PASSWORD")
-    MAIL_DEFAULT_SENDER = env_str("MAIL_DEFAULT_SENDER", MAIL_USERNAME)
+    MAIL_DEFAULT_SENDER = env_str("MAIL_FROM")
     
     MAIL_SUPPRESS_SEND = env_bool("MAIL_SUPPRESS_SEND", False)
 
