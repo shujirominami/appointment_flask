@@ -8,6 +8,8 @@ from flask import (
     flash,
 )
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
+from flask_mail import Message
+from extensions import mail
 
 # 予約データを保存する関数（models/reservation_model.py 側で実装予定）
 from models.reservation_model import create_reservation
@@ -59,11 +61,28 @@ def email_input():
             _external=True,  # 絶対URL（メールにそのまま記載できる）
         )
 
-        # 本来はここでメール送信を行う。
-        # ひとまず開発中はコンソールに出力して動作確認する。
-        current_app.logger.info(f"[DEBUG] Magic link for {email}: {magic_link}")
+        # --- ここからメール送信 ---
+        subject = "【予約フォーム】入力用リンク（有効期限：1時間）"
+        body = f"""予約フォームへのリンクです（有効期限：1時間）：
+        {magic_link}
 
-        # TODO: 後でメール送信処理を実装（SMTP や外部サービス利用）
+        このメールに心当たりがない場合は破棄してください。
+        """
+
+        msg = Message(
+            subject=subject,
+            recipients=[email],
+            body=body,
+        )
+        try:
+            mail.send(msg)
+            current_app.logger.info(f"[MAIL] Sent magic link to {email}")
+        except Exception:
+            # 送信失敗の詳細はログに出す
+            current_app.logger.exception("[MAIL] Failed to send magic link")
+            flash("メール送信に失敗しました。しばらくしてから再度お試しください。", "error")
+            return render_template("email_input.html")
+        # --- ここまでメール送信 ---
 
         return render_template("email_sent.html", email=email)
 
