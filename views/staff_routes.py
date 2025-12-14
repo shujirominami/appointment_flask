@@ -9,6 +9,7 @@ from flask import (
 from flask import current_app
 from flask_mail import Message
 from extensions import mail
+from utils.tokens import issue_token
 from flask_login import login_user, logout_user, login_required, current_user
 from models.staff_user_model import verify_staff_password
 
@@ -93,6 +94,8 @@ def reservation_detail(reservation_id: int):
     if reservation is None:
         flash("指定された予約が見つかりません。", "error")
         return redirect(url_for("staff.reservation_list"))
+    
+    before_status = reservation["status"]
 
     if request.method == "POST":
         # フォームからの値を取得
@@ -113,9 +116,76 @@ def reservation_detail(reservation_id: int):
             staff_note=staff_note or None,
             handled_by=handled_by or None,
         )
+        
+        # --- ここから：確定メール送信（confirmedに変わった時だけ） ---
+        if before_status != "confirmed" and status == "confirmed" and confirmed_datetime:
+            updated = get_reservation_by_id(reservation_id)
+            if updated is not None:
+                to_email = updated["email"]
 
-        flash("予約情報を更新しました。", "success")
-        return redirect(url_for("staff.reservation_detail", reservation_id=reservation_id))
+                subject = "【人工内耳センター】ご予約日時が確定しました"
+                body = f"""ご予約日時が確定しました。
+
+【確定日時】
+{confirmed_datetime}
+
+【ご注意】
+本メールにお心当たりがない場合は破棄してください。
+"""
+                sender = current_app.config.get("MAIL_FROM")
+                msg = Message(
+                    subject=subject,
+                    recipients=[to_email],
+                    body=body,
+                    sender=sender,
+                )
+
+                try:
+                    mail.send(msg)
+                    current_app.logger.info(f"[MAIL] Sent confirmation mail to {to_email}")
+                except Exception:
+                    current_app.logger.exception("[MAIL] Failed to send confirmation mail")
+                    flash("予約は更新しましたが、確定メールの送信に失敗しました。", "error")
+        # --- ここまで：確定メール送信 ---
+        
+        # 再調整なら再入力リンクを送る
+        if status == "need_reschedule":
+            patient_email = reservation["email"]
+
+            # 再入力リンク用トークン（email + reservation_id を入れておくと後で追跡しやすい）
+            reschedule_token = issue_token({
+                "email": patient_email,
+                "reservation_id": reservation_id,
+            })
+
+            reschedule_link = url_for(
+                "public.reschedule",
+                token=reschedule_token,
+                _external=True,
+            )
+
+            subject = "【人工内耳センター】予約日程の再入力のお願い"
+            body = f"""ご入力いただいた候補日程では調整が難しいため、恐れ入りますが再度ご希望日程をご入力ください。
+
+再入力用リンク（有効期限：48時間）：
+{reschedule_link}
+
+このメールに心当たりがない場合は破棄してください。
+"""
+
+            msg = Message(
+                subject=subject,
+                sender=current_app.config.get("MAIL_FROM"),
+                recipients=[patient_email],
+                body=body,
+            )
+
+            try:
+                mail.send(msg)
+            except Exception:
+                current_app.logger.exception("[MAIL] Failed to send reschedule link")
+                flash("再入力依頼メールの送信に失敗しました（ログを確認してください）。", "error")
+                # ここでreturnしない（DB更新は成功しているため）
 
     # GET の場合：詳細画面を表示
     return render_template("staff/reservation_detail.html", reservation=reservation)
