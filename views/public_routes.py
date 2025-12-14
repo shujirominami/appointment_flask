@@ -71,6 +71,7 @@ def email_input():
 
         msg = Message(
             subject=subject,
+            sender=current_app.config.get("MAIL_FROM"),
             recipients=[email],
             body=body,
         )
