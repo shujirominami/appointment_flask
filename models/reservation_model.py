@@ -256,3 +256,31 @@ def update_reservation_choices(
         ),
     )
     db.commit()
+
+
+def update_reservation_status(
+    reservation_id: int,
+    status: str,
+    confirmed_datetime: Optional[str] = None,
+    staff_note: Optional[str] = None,
+    handled_by: Optional[str] = None,
+) -> None:
+    """
+    予約のステータスや確定日時、職員メモなどを更新する。
+    職員用画面から「予約確定」「再調整」「キャンセル」などを操作する際に利用。
+    """
+    db = get_db()
+    db.execute(
+        """
+        UPDATE reservations
+        SET
+            status = ?,
+            confirmed_datetime = ?,
+            staff_note = ?,
+            handled_by = ?,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?;
+        """,
+        (status, confirmed_datetime, staff_note, handled_by, reservation_id),
+    )
+    db.commit()
