@@ -1,0 +1,84 @@
+{% extends "staff/base_staff.html" %}
+
+{% block title %}予約管理ダッシュボード{% endblock %}
+
+{% block content %}
+
+<h2>未処理の予約リクエスト</h2>
+
+{% if pending_reservations %}
+  <table class="staff-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>氏名</th>
+        <th>紹介元</th>
+        <th>第1希望</th>
+        <th>受付日時</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in pending_reservations %}
+      <tr>
+        <td>{{ r.id }}</td>
+        <td>{{ r.last_name }} {{ r.first_name }}</td>
+        <td>{{ r.referring_hospital or "-" }}</td>
+        <td>
+          {{ r.first_choice_date }}<br>
+          {{ r.first_choice_time_slot }}
+        </td>
+        <td>{{ r.created_at }}</td>
+        <td>
+          <a class="btn-small"
+             href="{{ url_for('staff.reservation_detail', reservation_id=r.id) }}">
+            詳細
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>未処理の予約はありません。</p>
+{% endif %}
+
+<hr>
+
+<h2>最近の予約（全ステータス）</h2>
+
+{% if recent_reservations %}
+  <table class="staff-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>氏名</th>
+        <th>ステータス</th>
+        <th>確定日時</th>
+        <th>対応者</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in recent_reservations %}
+      <tr>
+        <td>{{ r.id }}</td>
+        <td>{{ r.last_name }} {{ r.first_name }}</td>
+        <td>{{ r.status }}</td>
+        <td>{{ r.confirmed_datetime or "-" }}</td>
+        <td>{{ r.handled_by or "-" }}</td>
+        <td>
+          <a class="btn-small"
+             href="{{ url_for('staff.reservation_detail', reservation_id=r.id) }}">
+            詳細
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>予約データがありません。</p>
+{% endif %}
+
+{% endblock %}
