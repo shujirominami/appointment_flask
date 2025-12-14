@@ -1,11 +1,11 @@
 from flask import Flask
 from config import DevelopmentConfig
 from dotenv import load_dotenv
-from extensions import mail
+from extensions import mail, login_manager
 
 # モデルの初期化関数（DB 作成）
 from models.reservation_model import init_db
-from models.staff_user_model import init_staff_users_table
+from models.staff_user_model import init_staff_users_table, get_staff_user_by_id
 
 def create_app(config_class=DevelopmentConfig):
     """
@@ -21,7 +21,22 @@ def create_app(config_class=DevelopmentConfig):
     
     # Flask-Mail 初期化（設定が入った後）
     mail.init_app(app)
+    
+    # Flask-Login 初期化
+    login_manager.init_app(app)
 
+    # 未ログイン時に飛ばす先（職員ログイン画面のエンドポイント名）
+    login_manager.login_view = "staff.login"
+    login_manager.login_message = "職員ログインが必要です。"
+    login_manager.login_message_category = "error"
+    
+    @login_manager.user_loader
+    def load_user(user_id: str):
+    # Flask-Login は user_id を文字列で渡すので int に変換
+        try:
+            return get_staff_user_by_id(int(user_id))
+        except (ValueError, TypeError):
+            return None
     # SQLite のファイルは instance/ 配下に置くので、フォルダを作成しておく
     try:
         import os
