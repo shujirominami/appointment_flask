@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% set title = "メールを送信しました" %}
+
+{% block content %}
+<section class="card">
+  <div class="stepbar" aria-label="手順">
+    <div class="step">1 予約開始</div>
+    <div class="step is-active">2 メール</div>
+    <div class="step">3 入力</div>
+    <div class="step">4 受付</div>
+  </div>
+
+  <h1 class="h1">メールを送信しました</h1>
+  <p class="help">
+    <strong>{{ email }}</strong> 宛に、入力フォームのリンクを送りました。<br>
+    メールを開いてリンクを押してください。
+  </p>
+
+  {% if dev_link %}
+  <div class="devbox">
+    <div class="devtitle">（開発用）メール送信の代わりにリンクを表示</div>
+    <a class="link" href="{{ dev_link }}">{{ dev_link }}</a>
+  </div>
+  {% endif %}
+
+  <details class="faq">
+    <summary>メールが届かないとき</summary>
+    <ul class="list">
+      <li>迷惑メールフォルダを確認</li>
+      <li>メールアドレスの入力ミスがないか確認</li>
+      <li>受信制限がある場合は受信許可を設定</li>
+    </ul>
+  </details>
+
+  <a class="link" href="{{ url_for('public.email_input') }}">別のメールでやり直す</a>
+</section>
+{% endblock %}

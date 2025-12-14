@@ -1,0 +1,56 @@
+{% extends "staff/base_staff.html" %}
+{% set title = "予約詳細" %}
+
+{% block content %}
+<section class="card">
+  {% if not_found %}
+    <h1 class="h1">見つかりません</h1>
+  {% else %}
+    <h1 class="h1">予約 #{{ r.id }}</h1>
+
+    <div class="grid">
+      <div>
+        <h2 class="h2">患者入力</h2>
+        <div class="kv"><div>氏名</div><div>{{ r.patient_name }}</div></div>
+        <div class="kv"><div>メール</div><div>{{ r.email }}</div></div>
+        <div class="kv"><div>希望日1</div><div>{{ r.preferred_date1 or "-" }}</div></div>
+        <div class="kv"><div>希望日2</div><div>{{ r.preferred_date2 or "-" }}</div></div>
+        <div class="kv"><div>希望日3</div><div>{{ r.preferred_date3 or "-" }}</div></div>
+        <div class="kv"><div>希望帯</div><div>{{ r.preferred_time or "-" }}</div></div>
+        <div class="kv"><div>備考</div><div>{{ r.note or "-" }}</div></div>
+        <div class="kv"><div>状態</div><div><strong>{{ r.status }}</strong></div></div>
+      </div>
+
+      <div>
+        <h2 class="h2">確定入力</h2>
+
+        {% if error %}
+          <div class="alert" role="alert">{{ error }}</div>
+        {% endif %}
+
+        <form method="post" action="{{ url_for('staff.confirm', reservation_id=r.id) }}" class="form">
+          <label class="label" for="confirmed_datetime">確定日時（必須）</label>
+          <input class="input" id="confirmed_datetime" name="confirmed_datetime" type="text"
+                 placeholder="例：2025-12-20 10:30" value="{{ r.confirmed_datetime or '' }}" required>
+
+          <label class="label" for="confirmed_note">案内（任意）</label>
+          <textarea class="textarea" id="confirmed_note" name="confirmed_note" rows="5"
+            placeholder="例：初診のため保険証をご持参ください。">{{ r.confirmed_note or '' }}</textarea>
+
+          <label class="label" for="confirmed_by">確定者（任意）</label>
+          <input class="input" id="confirmed_by" name="confirmed_by" type="text" value="{{ r.confirmed_by or '' }}">
+
+          <button class="button" type="submit">確定してメール送信</button>
+        </form>
+
+        {% if r.confirm_email_body %}
+          <details class="box">
+            <summary>送信内容（控え）</summary>
+            <pre class="pre">{{ r.confirm_email_body }}</pre>
+          </details>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

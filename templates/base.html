@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ title or "オンライン外来予約" }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <main class="container">
+    <header class="header">
+      <div class="brand">
+        <div class="brand-title">オンライン外来予約</div>
+        <div class="brand-sub">電話なしで、簡単・安心に予約できます</div>
+      </div>
+    </header>
+
+    {% if alert %}
+      <div class="alert" role="alert" aria-live="polite">{{ alert }}</div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+    <footer class="footer">
+      <small>※本フォームは「予約リクエスト」です。確定はスタッフ確認後にご案内します。</small>
+    </footer>
+  </main>
+</body>
+</html>
