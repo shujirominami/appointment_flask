@@ -7,9 +7,10 @@ from flask import (
     url_for,
     flash,
 )
-from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
+
 from flask_mail import Message
 from extensions import mail
+from utils.tokens import issue_token, verify_token
 
 # 予約データを保存する関数（models/reservation_model.py 側で実装予定）
 from models.reservation_model import create_reservation
@@ -18,14 +19,6 @@ from models.reservation_model import create_reservation
 bp = Blueprint("public", __name__)
 
 
-def _get_serializer():
-    """
-    マジックリンク用のトークンを発行・検証するためのシリアライザ。
-    SECRET_KEY と salt を使って安全なトークンを生成する。
-    """
-    secret_key = current_app.config["SECRET_KEY"]
-    # salt は任意だが、用途ごとに固定文字列を使うとよい
-    return URLSafeTimedSerializer(secret_key, salt="ci-appointment-magic-link")
 
 
 @bp.route("/")
@@ -51,8 +44,7 @@ def email_input():
             return render_template("email_input.html")
 
         # トークン生成
-        s = _get_serializer()
-        token = s.dumps({"email": email})
+        token = issue_token({"email": email})
 
         # 予約フォームへのマジックリンクを生成
         magic_link = url_for(
@@ -97,17 +89,16 @@ def reservation_form(token):
     マジックリンクからアクセスされる予約リクエストフォーム。
     トークンからメールアドレスを取り出し、フォーム送信時に DB へ保存する。
     """
-    s = _get_serializer()
-    try:
-        data = s.loads(token, max_age=60 * 60)  # 有効期限 1時間（秒単位）
-        email = data.get("email")
-    except SignatureExpired:
-        # トークンの有効期限切れ
+    data, err = verify_token(token, max_age_seconds=60 * 60)
+
+    if err == "expired":
         return render_template("token_invalid.html", reason="expired")
-    except BadSignature:
-        # 不正なトークン
+    if err == "invalid" or data is None:
         return render_template("token_invalid.html", reason="invalid")
 
+    email = data.get("email")
+    if not email:
+        return render_template("token_invalid.html", reason="invalid")
     if request.method == "POST":
         # フォームから送信された値を取得
         form = request.form
@@ -187,3 +178,26 @@ def reservation_done():
     予約リクエスト送信完了画面。
     """
     return render_template("reservation_done.html")
+
+@bp.route("/reservations/reschedule/<token>/", methods=["GET"])
+def reschedule(token: str):
+    """
+    スタッフから送られた「再入力依頼リンク」から到達するエンドポイント。
+    ここでトークン検証 → 新しいフォーム用トークンを発行 → フォームへ誘導する。
+    """
+    data, err = verify_token(token, max_age_seconds=48 * 60 * 60)  # 例：再入力リンクも1時間
+
+    if err == "expired":
+        return render_template("token_invalid.html", reason="expired")
+    if err == "invalid" or data is None:
+        return render_template("token_invalid.html", reason="invalid")
+
+    email = data.get("email")
+    if not email:
+        return render_template("token_invalid.html", reason="invalid")
+
+    # 新しい予約フォーム用トークンを発行
+    new_token = issue_token({"email": email})
+
+    # 予約フォームへリダイレクト（新しいトークンで）
+    return redirect(url_for("public.reservation_form", token=new_token))
