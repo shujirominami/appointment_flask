@@ -20,16 +20,16 @@
 <section class="card" style="max-width: 520px;">
   <form method="post" class="staff-form">
     <div class="form-row">
-      <label for="username">ユーザー名（またはメール）</label>
-      <input
-        id="username"
-        name="username"
-        type="text"
+      <label for="email">メールアドレス</label>
+    <input
+        id="email"
+        name="email"
+        type="email"
         autocomplete="username"
         required
-        value="{{ request.form.get('username','') }}"
-        placeholder="例：staff01 など"
-      >
+        value="{{ email or request.form.get('email','') }}"
+        placeholder="例：minami.shujiro.mf@mail.hosp.go.jp"
+    >
     </div>
 
     <div class="form-row">
