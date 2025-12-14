@@ -217,6 +217,47 @@ def get_all_reservations(limit: int = 100) -> List[sqlite3.Row]:
 # 職員側で使う更新系
 # --------------------------------------
 
+def update_reservation_choices(
+    reservation_id: int,
+    first_choice_date: str,
+    first_choice_time_slot: str,
+    second_choice_date: Optional[str] = None,
+    second_choice_time_slot: Optional[str] = None,
+    third_choice_date: Optional[str] = None,
+    third_choice_time_slot: Optional[str] = None,
+) -> None:
+    """
+    予約の「希望日程」だけを更新する関数。
+    再調整（再入力）時に使う想定で、status を pending に戻す。
+    """
+    db = get_db()
+    db.execute(
+        """
+        UPDATE reservations
+        SET
+            first_choice_date = ?,
+            first_choice_time_slot = ?,
+            second_choice_date = ?,
+            second_choice_time_slot = ?,
+            third_choice_date = ?,
+            third_choice_time_slot = ?,
+            status = 'pending',
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?;
+        """,
+        (
+            first_choice_date,
+            first_choice_time_slot,
+            second_choice_date,
+            second_choice_time_slot,
+            third_choice_date,
+            third_choice_time_slot,
+            reservation_id,
+        ),
+    )
+    db.commit()
+
+
 def update_reservation_status(
     reservation_id: int,
     status: str,
@@ -226,7 +267,7 @@ def update_reservation_status(
 ) -> None:
     """
     予約のステータスや確定日時、職員メモなどを更新する。
-    職員用画面から「予約確定」「再調整」などを操作する際に利用。
+    職員用画面から「予約確定」「再調整」「キャンセル」などを操作する際に利用。
     """
     db = get_db()
     db.execute(

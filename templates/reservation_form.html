@@ -3,6 +3,7 @@
 {% block title %}予約希望入力 | 人工内耳センター 予約リクエスト{% endblock %}
 
 {% block content %}
+{% set d = form_data or {} %}
 <section class="card">
   <h1 class="page-title">初診外来 予約希望フォーム</h1>
 
@@ -36,7 +37,7 @@
       name="referring_hospital"
       class="input"
       placeholder="例：○○クリニック"
-      value="{{ form_data.get('referring_hospital','') }}"
+      value="{{ d.get('referring_hospital','') }}"
     >
 
     <hr class="divider">
@@ -51,7 +52,7 @@
           name="last_name"
           class="input"
           required
-          value="{{ form_data.get('last_name','') }}"
+          value="{{ d.get('last_name','') }}"
         >
       </div>
       <div>
@@ -62,7 +63,7 @@
           name="first_name"
           class="input"
           required
-          value="{{ form_data.get('first_name','') }}"
+          value="{{ d.get('first_name','') }}"
         >
       </div>
     </div>
@@ -75,8 +76,8 @@
           id="last_name_kana"
           name="last_name_kana"
           class="input"
-          placeholder="例：ミナミ"
-          value="{{ form_data.get('last_name_kana','') }}"
+          placeholder="例：ヨシダ"
+          value="{{ d.get('last_name_kana','') }}"
         >
       </div>
       <div>
@@ -86,8 +87,8 @@
           id="first_name_kana"
           name="first_name_kana"
           class="input"
-          placeholder="例：シュウジロウ"
-          value="{{ form_data.get('first_name_kana','') }}"
+          placeholder="例：シゲル"
+          value="{{ d.get('first_name_kana','') }}"
         >
       </div>
     </div>
@@ -109,10 +110,10 @@
       <div>
         <label class="label" for="sex">性別</label>
         <select id="sex" name="sex" class="input" required>
-          <option value="" {% if form_data.get('sex','')=='' %}selected{% endif %}>選択してください</option>
-          <option value="M" {% if form_data.get('sex','')=='M' %}selected{% endif %}>男性</option>
-          <option value="F" {% if form_data.get('sex','')=='F' %}selected{% endif %}>女性</option>
-          <option value="O" {% if form_data.get('sex','')=='O' %}selected{% endif %}>その他／回答しない</option>
+          <option value="" {% if d.get('sex','')=='' %}selected{% endif %}>選択してください</option>
+          <option value="M" {% if d.get('sex','')=='M' %}selected{% endif %}>男性</option>
+          <option value="F" {% if d.get('sex','')=='F' %}selected{% endif %}>女性</option>
+          <option value="O" {% if d.get('sex','')=='O' %}selected{% endif %}>その他／回答しない</option>
         </select>
       </div>
     </div>
