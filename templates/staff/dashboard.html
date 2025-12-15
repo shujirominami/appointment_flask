@@ -1,49 +1,4 @@
 {% extends "staff/base_staff.html" %}
-{% set title = "予約一覧" %}
-
-{% block content %}
-<section class="card">
-  <h1 class="h1">未処理（受付）</h1>
-  <table class="table">
-    <thead>
-      <tr><th>ID</th><th>氏名</th><th>作成</th><th></th></tr>
-    </thead>
-    <tbody>
-      {% for r in pending %}
-      <tr>
-        <td>#{{ r.id }}</td>
-        <td>{{ r.patient_name }}</td>
-        <td>{{ r.created_at }}</td>
-        <td><a class="btnlink" href="{{ url_for('staff.reservation_detail', reservation_id=r.id) }}">詳細</a></td>
-      </tr>
-      {% else %}
-      <tr><td colspan="4">未処理はありません</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</section>
-
-<section class="card">
-  <h1 class="h1">確定済</h1>
-  <table class="table">
-    <thead>
-      <tr><th>ID</th><th>氏名</th><th>確定日時</th><th></th></tr>
-    </thead>
-    <tbody>
-      {% for r in confirmed %}
-      <tr>
-        <td>#{{ r.id }}</td>
-        <td>{{ r.patient_name }}</td>
-        <td>{{ r.confirmed_datetime or "-" }}</td>
-        <td><a class="btnlink" href="{{ url_for('staff.reservation_detail', reservation_id=r.id) }}">詳細</a></td>
-      </tr>
-      {% else %}
-      <tr><td colspan="4">確定済はありません</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</section>
-{% endblock %}
 
 {% block title %}予約管理ダッシュボード{% endblock %}
 

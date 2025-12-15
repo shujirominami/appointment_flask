@@ -1,13 +1,4 @@
 {% extends "base.html" %}
-{% set title = "リンクが使えません" %}
-
-{% block content %}
-<section class="card">
-  <h1 class="h1">リンクが使えません</h1>
-  <p class="help">{{ reason }}</p>
-  <a class="button" href="{{ url_for('public.email_input') }}">もう一度やり直す</a>
-</section>
-{% endblock %}
 
 {% block title %}リンクが無効です | 人工内耳センター 予約リクエスト{% endblock %}
 

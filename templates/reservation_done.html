@@ -1,29 +1,4 @@
 {% extends "base.html" %}
-{% set title = "受け付けました" %}
-
-{% block content %}
-<section class="card">
-  <div class="stepbar" aria-label="手順">
-    <div class="step">1 予約開始</div>
-    <div class="step">2 メール</div>
-    <div class="step">3 入力</div>
-    <div class="step is-active">4 受付</div>
-  </div>
-
-  <h1 class="h1">受け付けました</h1>
-  <p class="help">
-    予約リクエストを受け付けました。<br>
-    スタッフが内容を確認して、確定メールをお送りします。
-  </p>
-
-  <div class="info">
-    <div>受付番号</div>
-    <div class="strong">#{{ reservation_id }}</div>
-  </div>
-
-  <a class="button button-secondary" href="{{ url_for('public.home') }}">トップへ戻る</a>
-</section>
-{% endblock %}
 
 {% block title %}予約リクエスト受付完了{% endblock %}
 
