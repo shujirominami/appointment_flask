@@ -27,3 +27,49 @@
   </main>
 </body>
 </html>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{% block title %}人工内耳センター 予約リクエスト{% endblock %}</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="site-title">
+        人工内耳センター 初診外来 予約リクエスト
+      </div>
+      <div class="site-subtitle">
+        東京医療センター（オンライン受付）
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    {# Flask の flash() メッセージ表示 #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-area" role="status" aria-live="polite">
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category|e }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <small>
+        ※このフォームは「予約希望の受付」です。確定は職員確認後にメールでご連絡します。
+      </small>
+    </div>
+  </footer>
+</body>
+</html>

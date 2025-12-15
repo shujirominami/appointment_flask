@@ -8,6 +8,24 @@ BASE_DIR = Path(__file__).resolve().parent
 INSTANCE_DIR = BASE_DIR / "instance"
 INSTANCE_DIR.mkdir(exist_ok=True)  # ディレクトリがなければ作成
 
+# -------------------------
+# 環境変数ヘルパー（初心者向け）
+# -------------------------
+def env_str(key: str, default: str | None = None) -> str | None:
+    """環境変数を文字列として取得（無ければdefault）"""
+    return os.environ.get(key, default)
+
+def env_bool(key: str, default: bool = False) -> bool:
+    """環境変数を真偽値として取得（true/1/yes/on などを True）"""
+    val = os.environ.get(key)
+    if val is None:
+        return default
+    return val.strip().lower() in ("1", "true", "yes", "y", "on")
+
+def env_int(key: str, default: int) -> int:
+    """環境変数を整数として取得（無ければdefault）"""
+    val = os.environ.get(key)
+    return int(val) if val is not None else default
 
 class Config:
     """
@@ -19,12 +37,22 @@ class Config:
     # 本番では必ず環境変数 SECRET_KEY を設定してください。
     SECRET_KEY = os.environ.get("SECRET_KEY", "change-this-dev-secret-key")
 
-    # SQLite のファイルパス（例：appointment_flask/instance/appointment.db）
-    DATABASE = INSTANCE_DIR / "appointment.db"
+    # DB: 環境変数 DATABASE があればそれを優先、無ければ instance/appointment.db
+    DATABASE = env_str("DATABASE", str(INSTANCE_DIR / "appointment.db"))
 
-    # 後でメール送信などを追加する場合は、ここに共通設定を書く：
-    # MAIL_SERVER = os.environ.get("MAIL_SERVER", "localhost")
-    # MAIL_PORT = int(os.environ.get("MAIL_PORT", 25))
+    # メール設定（Xserver SMTP想定）
+    MAIL_SERVER = env_str("MAIL_SERVER")
+    MAIL_PORT = env_int("MAIL_PORT", 465)
+    MAIL_USE_SSL = env_bool("MAIL_USE_SSL", True)
+    MAIL_USE_TLS = env_bool("MAIL_USE_TLS", False)
+    MAIL_USERNAME = env_str("MAIL_USERNAME")
+    MAIL_PASSWORD = env_str("MAIL_PASSWORD")
+    MAIL_DEFAULT_SENDER = env_str("MAIL_FROM")
+    
+    MAIL_SUPPRESS_SEND = env_bool("MAIL_SUPPRESS_SEND", False)
+
+    # メールに載せるリンクのベースURL（本番は Render のURL）
+    APP_BASE_URL = env_str("APP_BASE_URL", "http://127.0.0.1:5000")
 
 
 class DevelopmentConfig(Config):
@@ -35,6 +63,7 @@ class DevelopmentConfig(Config):
 
     DEBUG = True
     TESTING = False
+    MAIL_SUPPRESS_SEND = False  # 本当に送る場合
 
 
 class ProductionConfig(Config):
@@ -46,5 +75,13 @@ class ProductionConfig(Config):
     DEBUG = False
     TESTING = False
 
-    # 本番では SECRET_KEY は必須（未設定なら起動時にエラーにする）
-    SECRET_KEY = os.environ["SECRET_KEY"]
+    @classmethod
+    def validate(cls):
+        """
+        本番起動時に必須環境変数が揃っているかチェック
+        """
+        if "SECRET_KEY" not in os.environ:
+            raise RuntimeError(
+                "SECRET_KEY is not set. "
+                "Please define it as an environment variable."
+            )

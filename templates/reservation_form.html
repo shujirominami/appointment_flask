@@ -54,3 +54,218 @@
   </form>
 </section>
 {% endblock %}
+
+{% block title %}予約希望入力 | 人工内耳センター 予約リクエスト{% endblock %}
+
+{% block content %}
+{% set d = form_data or {} %}
+<section class="card">
+  <h1 class="page-title">初診外来 予約希望フォーム</h1>
+
+  <p class="help-text">
+    予約希望日を<strong>第1〜第3希望</strong>までご入力ください。<br>
+    予約は職員が電子カルテの空き状況を確認後、メールで確定連絡します。
+  </p>
+
+  <div class="email-box">
+    連絡先メール：{{ email }}
+  </div>
+
+  <form method="post" action="" class="form">
+    <!-- 任意：診察券番号 -->
+    <label class="label" for="chart_number">診察券番号（お持ちの方のみ）</label>
+    <input
+      type="text"
+      id="chart_number"
+      name="chart_number"
+      class="input"
+      inputmode="numeric"
+      placeholder="例：1234567"
+      value="{{ form_data.get('chart_number','') }}"
+    >
+
+    <!-- 紹介元 -->
+    <label class="label" for="referring_hospital">紹介元医療機関名</label>
+    <input
+      type="text"
+      id="referring_hospital"
+      name="referring_hospital"
+      class="input"
+      placeholder="例：○○クリニック"
+      value="{{ d.get('referring_hospital','') }}"
+    >
+
+    <hr class="divider">
+
+    <!-- 氏名 -->
+    <div class="grid-2">
+      <div>
+        <label class="label" for="last_name">お名前（姓）</label>
+        <input
+          type="text"
+          id="last_name"
+          name="last_name"
+          class="input"
+          required
+          value="{{ d.get('last_name','') }}"
+        >
+      </div>
+      <div>
+        <label class="label" for="first_name">お名前（名）</label>
+        <input
+          type="text"
+          id="first_name"
+          name="first_name"
+          class="input"
+          required
+          value="{{ d.get('first_name','') }}"
+        >
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <label class="label" for="last_name_kana">フリガナ（セイ）</label>
+        <input
+          type="text"
+          id="last_name_kana"
+          name="last_name_kana"
+          class="input"
+          placeholder="例：ヨシダ"
+          value="{{ d.get('last_name_kana','') }}"
+        >
+      </div>
+      <div>
+        <label class="label" for="first_name_kana">フリガナ（メイ）</label>
+        <input
+          type="text"
+          id="first_name_kana"
+          name="first_name_kana"
+          class="input"
+          placeholder="例：シゲル"
+          value="{{ d.get('first_name_kana','') }}"
+        >
+      </div>
+    </div>
+
+    <!-- 生年月日・性別 -->
+    <div class="grid-2">
+      <div>
+        <label class="label" for="birth_date">生年月日</label>
+        <input
+          type="date"
+          id="birth_date"
+          name="birth_date"
+          class="input"
+          required
+          value="{{ form_data.get('birth_date','') }}"
+        >
+      </div>
+
+      <div>
+        <label class="label" for="sex">性別</label>
+        <select id="sex" name="sex" class="input" required>
+          <option value="" {% if d.get('sex','')=='' %}selected{% endif %}>選択してください</option>
+          <option value="M" {% if d.get('sex','')=='M' %}selected{% endif %}>男性</option>
+          <option value="F" {% if d.get('sex','')=='F' %}selected{% endif %}>女性</option>
+          <option value="O" {% if d.get('sex','')=='O' %}selected{% endif %}>その他／回答しない</option>
+        </select>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <h2 class="section-title">予約希望日時（スロット方式）</h2>
+    <p class="help-text">
+      スロットは目安です。確定日時は職員確認後にご連絡します。
+    </p>
+
+    <!-- 第1希望 -->
+    <fieldset class="fieldset">
+      <legend class="legend">第1希望（必須）</legend>
+      <div class="grid-2">
+        <div>
+          <label class="label" for="first_choice_date">日付</label>
+          <input
+            type="date"
+            id="first_choice_date"
+            name="first_choice_date"
+            class="input"
+            required
+            value="{{ form_data.get('first_choice_date','') }}"
+          >
+        </div>
+        <div>
+          <label class="label" for="first_choice_time_slot">時間帯</label>
+          <select id="first_choice_time_slot" name="first_choice_time_slot" class="input" required>
+            <option value="" {% if form_data.get('first_choice_time_slot','')=='' %}selected{% endif %}>選択してください</option>
+            <option value="am_early" {% if form_data.get('first_choice_time_slot','')=='am_early' %}selected{% endif %}>午前（早め）</option>
+            <option value="am_late" {% if form_data.get('first_choice_time_slot','')=='am_late' %}selected{% endif %}>午前（遅め）</option>
+            <option value="pm" {% if form_data.get('first_choice_time_slot','')=='pm' %}selected{% endif %}>午後</option>
+          </select>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- 第2希望 -->
+    <fieldset class="fieldset">
+      <legend class="legend">第2希望（任意）</legend>
+      <div class="grid-2">
+        <div>
+          <label class="label" for="second_choice_date">日付</label>
+          <input
+            type="date"
+            id="second_choice_date"
+            name="second_choice_date"
+            class="input"
+            value="{{ form_data.get('second_choice_date','') }}"
+          >
+        </div>
+        <div>
+          <label class="label" for="second_choice_time_slot">時間帯</label>
+          <select id="second_choice_time_slot" name="second_choice_time_slot" class="input">
+            <option value="" {% if form_data.get('second_choice_time_slot','')=='' %}selected{% endif %}>未選択</option>
+            <option value="am_early" {% if form_data.get('second_choice_time_slot','')=='am_early' %}selected{% endif %}>午前（早め）</option>
+            <option value="am_late" {% if form_data.get('second_choice_time_slot','')=='am_late' %}selected{% endif %}>午前（遅め）</option>
+            <option value="pm" {% if form_data.get('second_choice_time_slot','')=='pm' %}selected{% endif %}>午後</option>
+          </select>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- 第3希望 -->
+    <fieldset class="fieldset">
+      <legend class="legend">第3希望（任意）</legend>
+      <div class="grid-2">
+        <div>
+          <label class="label" for="third_choice_date">日付</label>
+          <input
+            type="date"
+            id="third_choice_date"
+            name="third_choice_date"
+            class="input"
+            value="{{ form_data.get('third_choice_date','') }}"
+          >
+        </div>
+        <div>
+          <label class="label" for="third_choice_time_slot">時間帯</label>
+          <select id="third_choice_time_slot" name="third_choice_time_slot" class="input">
+            <option value="" {% if form_data.get('third_choice_time_slot','')=='' %}selected{% endif %}>未選択</option>
+            <option value="am_early" {% if form_data.get('third_choice_time_slot','')=='am_early' %}selected{% endif %}>午前（早め）</option>
+            <option value="am_late" {% if form_data.get('third_choice_time_slot','')=='am_late' %}selected{% endif %}>午前（遅め）</option>
+            <option value="pm" {% if form_data.get('third_choice_time_slot','')=='pm' %}selected{% endif %}>午後</option>
+          </select>
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="actions">
+      <button type="submit" class="button">予約希望を送信する</button>
+    </div>
+
+    <p class="note">
+      ※入力内容に不備がある場合、職員からメールで確認することがあります。
+    </p>
+  </form>
+</section>
+{% endblock %}

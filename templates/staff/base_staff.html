@@ -24,3 +24,60 @@
   </div>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}職員用管理画面{% endblock %}</title>
+
+  <!-- 職員用CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/staff.css') }}">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body class="staff-body">
+
+  <!-- ヘッダー -->
+  <header class="staff-header">
+    <div class="staff-header-inner">
+      <h1 class="staff-title">人工内耳センター 予約管理</h1>
+      <nav class="staff-nav">
+        <a href="{{ url_for('staff.reservation_list') }}">ダッシュボード</a>
+
+        {% if current_user.is_authenticated %}
+        <span class="staff-user">
+            {{ current_user.name }} さん
+        </span>
+        <a href="{{ url_for('staff.logout') }}">ログアウト</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <!-- フラッシュメッセージ表示 -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-area">
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- メインコンテンツ -->
+  <main class="staff-main">
+    {% block content %}
+    <!-- 各ページの中身がここに入る -->
+    {% endblock %}
+  </main>
+
+  <!-- フッター -->
+  <footer class="staff-footer">
+    <small>© 人工内耳センター</small>
+  </footer>
+
+</body>
+</html>

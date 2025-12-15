@@ -8,3 +8,42 @@
   <a class="button" href="{{ url_for('public.email_input') }}">もう一度やり直す</a>
 </section>
 {% endblock %}
+
+{% block title %}リンクが無効です | 人工内耳センター 予約リクエスト{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h1 class="page-title">リンクが無効です</h1>
+
+  {% if reason == "expired" %}
+    <p class="help-text">
+      このリンクは<strong>有効期限が切れています</strong>。
+      安全のため、一定時間が経過したリンクは使用できません。
+    </p>
+  {% elif reason == "invalid" %}
+    <p class="help-text">
+      このリンクは<strong>無効</strong>です（URLが誤っている、または改変された可能性があります）。
+      安全のため、予約フォームを開くことができません。
+    </p>
+  {% else %}
+    <p class="help-text">
+      このリンクは使用できません。安全のため、予約フォームを開くことができません。
+    </p>
+  {% endif %}
+
+  <ul class="notice-list">
+    <li>メールを受信した直後でも、再度クリックすると無効になる場合があります（古いリンクを開いた場合など）。</li>
+    <li>お手数ですが、下のボタンからリンクを再発行してください。</li>
+  </ul>
+
+  <div class="actions">
+    <a href="{{ url_for('public.email_input') }}" class="button">
+      メールアドレスを入力してリンクを再発行する
+    </a>
+  </div>
+
+  <p class="note">
+    ※何度試しても解決しない場合は、受診希望日を含めて人工内耳センターまでご相談ください。
+  </p>
+</section>
+{% endblock %}

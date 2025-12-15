@@ -35,3 +35,35 @@
   <a class="link" href="{{ url_for('public.email_input') }}">別のメールでやり直す</a>
 </section>
 {% endblock %}
+
+{% block title %}メール送信完了 | 人工内耳センター 予約リクエスト{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h1 class="page-title">メールを送信しました</h1>
+
+  <p class="help-text">
+    以下のメールアドレス宛に、<strong>予約フォームへのリンク</strong>を送信しました。
+  </p>
+
+  <div class="email-box">
+    {{ email }}
+  </div>
+
+  <p class="help-text">
+    メールに記載されているリンクをクリックして、予約希望フォームをご入力ください。
+  </p>
+
+  <ul class="notice-list">
+    <li>メールが届くまで数分かかる場合があります。</li>
+    <li>迷惑メールフォルダに振り分けられることがあります。</li>
+    <li>リンクの有効期限は<strong>1時間</strong>です。</li>
+  </ul>
+
+  <div class="actions">
+    <a href="{{ url_for('public.email_input') }}" class="button secondary">
+      別のメールアドレスで再送する
+    </a>
+  </div>
+</section>
+{% endblock %}
