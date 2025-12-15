@@ -1,4 +1,35 @@
 {% extends "base.html" %}
+{% set title = "メールを入力" %}
+
+{% block content %}
+<section class="card">
+  <div class="stepbar" aria-label="手順">
+    <div class="step">1 予約開始</div>
+    <div class="step is-active">2 メール</div>
+    <div class="step">3 入力</div>
+    <div class="step">4 受付</div>
+  </div>
+
+  <h1 class="h1">メールアドレスを入力</h1>
+  <p class="help">
+    入力したメール宛に、入力フォームのリンクを送ります。<br>
+    ※迷惑メールに入る場合があります。
+  </p>
+
+  {% if error %}
+    <div class="alert" role="alert" aria-live="polite">{{ error }}</div>
+  {% endif %}
+
+  <form method="post" class="form" novalidate>
+    <label class="label" for="email">メールアドレス</label>
+    <input class="input" id="email" name="email" type="email" inputmode="email"
+           autocomplete="email" required placeholder="example@email.com">
+    <button class="button" type="submit">リンクを送る</button>
+  </form>
+
+  <a class="link" href="{{ url_for('public.home') }}">戻る</a>
+</section>
+{% endblock %}
 
 {% block title %}メールアドレス入力 | 人工内耳センター 予約リクエスト{% endblock %}
 
