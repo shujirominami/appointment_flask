@@ -4,6 +4,7 @@
 
 {% block content %}
 {% set d = form_data or {} %}
+
 <section class="card">
   <h1 class="page-title">初診外来 予約希望フォーム</h1>
 
@@ -26,7 +27,7 @@
       class="input"
       inputmode="numeric"
       placeholder="例：1234567"
-      value="{{ form_data.get('chart_number','') }}"
+      value="{{ d.get('chart_number','') }}"
     >
 
     <!-- 紹介元 -->
@@ -103,8 +104,9 @@
           name="birth_date"
           class="input"
           required
-          value="{{ form_data.get('birth_date','') }}"
+          value="{{ d.get('birth_date','') }}"
         >
+        <div class="date-roll" id="birth_date_roll" aria-live="polite"></div>
       </div>
 
       <div>
@@ -120,9 +122,9 @@
 
     <hr class="divider">
 
-    <h2 class="section-title">予約希望日時（スロット方式）</h2>
+    <h2 class="section-title">予約希望日時</h2>
     <p class="help-text">
-      スロットは目安です。確定日時は職員確認後にご連絡します。
+      確定日時は職員確認後にご連絡します。
     </p>
 
     <!-- 第1希望 -->
@@ -137,16 +139,18 @@
             name="first_choice_date"
             class="input"
             required
-            value="{{ form_data.get('first_choice_date','') }}"
+            value="{{ d.get('first_choice_date','') }}"
           >
+          <div class="date-roll" id="first_choice_date_roll" aria-live="polite"></div>
         </div>
         <div>
           <label class="label" for="first_choice_time_slot">時間帯</label>
           <select id="first_choice_time_slot" name="first_choice_time_slot" class="input" required>
-            <option value="" {% if form_data.get('first_choice_time_slot','')=='' %}selected{% endif %}>選択してください</option>
-            <option value="am_early" {% if form_data.get('first_choice_time_slot','')=='am_early' %}selected{% endif %}>午前（早め）</option>
-            <option value="am_late" {% if form_data.get('first_choice_time_slot','')=='am_late' %}selected{% endif %}>午前（遅め）</option>
-            <option value="pm" {% if form_data.get('first_choice_time_slot','')=='pm' %}selected{% endif %}>午後</option>
+            <option value="" {% if d.get('first_choice_time_slot','')=='' %}selected{% endif %}>選択してください</option>
+            <option value="any" {% if d.get('first_choice_time_slot','')=='any' %}selected{% endif %}>特になし</option>
+            <option value="am_early" {% if d.get('first_choice_time_slot','')=='am_early' %}selected{% endif %}>午前（早め）</option>
+            <option value="am_late" {% if d.get('first_choice_time_slot','')=='am_late' %}selected{% endif %}>午前（遅め）</option>
+            <option value="pm" {% if d.get('first_choice_time_slot','')=='pm' %}selected{% endif %}>午後</option>
           </select>
         </div>
       </div>
@@ -163,16 +167,17 @@
             id="second_choice_date"
             name="second_choice_date"
             class="input"
-            value="{{ form_data.get('second_choice_date','') }}"
+            value="{{ d.get('second_choice_date','') }}"
           >
+          <div class="date-roll" id="second_choice_date_roll" aria-live="polite"></div>
         </div>
         <div>
           <label class="label" for="second_choice_time_slot">時間帯</label>
           <select id="second_choice_time_slot" name="second_choice_time_slot" class="input">
-            <option value="" {% if form_data.get('second_choice_time_slot','')=='' %}selected{% endif %}>未選択</option>
-            <option value="am_early" {% if form_data.get('second_choice_time_slot','')=='am_early' %}selected{% endif %}>午前（早め）</option>
-            <option value="am_late" {% if form_data.get('second_choice_time_slot','')=='am_late' %}selected{% endif %}>午前（遅め）</option>
-            <option value="pm" {% if form_data.get('second_choice_time_slot','')=='pm' %}selected{% endif %}>午後</option>
+            <option value="" {% if d.get('second_choice_time_slot','')=='' %}selected{% endif %}>特になし</option>
+            <option value="am_early" {% if d.get('second_choice_time_slot','')=='am_early' %}selected{% endif %}>午前（早め）</option>
+            <option value="am_late" {% if d.get('second_choice_time_slot','')=='am_late' %}selected{% endif %}>午前（遅め）</option>
+            <option value="pm" {% if d.get('second_choice_time_slot','')=='pm' %}selected{% endif %}>午後</option>
           </select>
         </div>
       </div>
@@ -189,16 +194,17 @@
             id="third_choice_date"
             name="third_choice_date"
             class="input"
-            value="{{ form_data.get('third_choice_date','') }}"
+            value="{{ d.get('third_choice_date','') }}"
           >
+          <div class="date-roll" id="third_choice_date_roll" aria-live="polite"></div>
         </div>
         <div>
           <label class="label" for="third_choice_time_slot">時間帯</label>
           <select id="third_choice_time_slot" name="third_choice_time_slot" class="input">
-            <option value="" {% if form_data.get('third_choice_time_slot','')=='' %}selected{% endif %}>未選択</option>
-            <option value="am_early" {% if form_data.get('third_choice_time_slot','')=='am_early' %}selected{% endif %}>午前（早め）</option>
-            <option value="am_late" {% if form_data.get('third_choice_time_slot','')=='am_late' %}selected{% endif %}>午前（遅め）</option>
-            <option value="pm" {% if form_data.get('third_choice_time_slot','')=='pm' %}selected{% endif %}>午後</option>
+            <option value="" {% if d.get('third_choice_time_slot','')=='' %}selected{% endif %}>特になし</option>
+            <option value="am_early" {% if d.get('third_choice_time_slot','')=='am_early' %}selected{% endif %}>午前（早め）</option>
+            <option value="am_late" {% if d.get('third_choice_time_slot','')=='am_late' %}selected{% endif %}>午前（遅め）</option>
+            <option value="pm" {% if d.get('third_choice_time_slot','')=='pm' %}selected{% endif %}>午後</option>
           </select>
         </div>
       </div>
@@ -213,4 +219,45 @@
     </p>
   </form>
 </section>
+
+<script>
+(function(){
+  const wd = ["日","月","火","水","木","金","土"];
+
+  function setRoll(inputId, rollId){
+    const el = document.getElementById(inputId);
+    const out = document.getElementById(rollId);
+    if(!el || !out) return;
+
+    const v = el.value;
+    if(!v){ out.textContent = ""; return; }
+
+    // type=date の値は YYYY-MM-DD。ローカル日付として扱う
+    const dt = new Date(v + "T00:00:00");
+    if (isNaN(dt.getTime())) { out.textContent = ""; return; }
+
+    const y = dt.getFullYear();
+    const m = String(dt.getMonth()+1).padStart(2,"0");
+    const d = String(dt.getDate()).padStart(2,"0");
+    const w = wd[dt.getDay()];
+    out.textContent = `${y}/${m}/${d}（${w}）`;
+  }
+
+  const pairs = [
+    ["birth_date","birth_date_roll"],
+    ["first_choice_date","first_choice_date_roll"],
+    ["second_choice_date","second_choice_date_roll"],
+    ["third_choice_date","third_choice_date_roll"],
+  ];
+
+  pairs.forEach(([a,b])=>{
+    const el = document.getElementById(a);
+    if(!el) return;
+    el.addEventListener("input", ()=>setRoll(a,b));
+    el.addEventListener("change", ()=>setRoll(a,b));
+    setRoll(a,b);
+  });
+})();
+</script>
+
 {% endblock %}
