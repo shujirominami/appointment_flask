@@ -179,3 +179,21 @@ body {
   font-weight: 700;
   padding: 0 6px;
 }
+.date-roll{
+  margin-top: 6px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #4b5563;
+}
+.date-roll-row{
+  display:grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.date-roll{
+  margin-top: 6px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #4b5563;
+}

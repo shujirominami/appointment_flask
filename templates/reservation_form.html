@@ -4,6 +4,7 @@
 
 {% block content %}
 {% set d = form_data or {} %}
+
 <section class="card">
   <h1 class="page-title">初診外来 予約希望フォーム</h1>
 
@@ -26,7 +27,7 @@
       class="input"
       inputmode="numeric"
       placeholder="例：1234567"
-      value="{{ form_data.get('chart_number','') }}"
+      value="{{ d.get('chart_number','') }}"
     >
 
     <!-- 紹介元 -->
@@ -46,65 +47,49 @@
     <div class="grid-2">
       <div>
         <label class="label" for="last_name">お名前（姓）</label>
-        <input
-          type="text"
-          id="last_name"
-          name="last_name"
-          class="input"
-          required
-          value="{{ d.get('last_name','') }}"
-        >
+        <input type="text" id="last_name" name="last_name" class="input" required
+               value="{{ d.get('last_name','') }}">
       </div>
       <div>
         <label class="label" for="first_name">お名前（名）</label>
-        <input
-          type="text"
-          id="first_name"
-          name="first_name"
-          class="input"
-          required
-          value="{{ d.get('first_name','') }}"
-        >
+        <input type="text" id="first_name" name="first_name" class="input" required
+               value="{{ d.get('first_name','') }}">
       </div>
     </div>
 
     <div class="grid-2">
       <div>
         <label class="label" for="last_name_kana">フリガナ（セイ）</label>
-        <input
-          type="text"
-          id="last_name_kana"
-          name="last_name_kana"
-          class="input"
-          placeholder="例：ヨシダ"
-          value="{{ d.get('last_name_kana','') }}"
-        >
+        <input type="text" id="last_name_kana" name="last_name_kana" class="input"
+               placeholder="例：ヨシダ" value="{{ d.get('last_name_kana','') }}">
       </div>
       <div>
         <label class="label" for="first_name_kana">フリガナ（メイ）</label>
-        <input
-          type="text"
-          id="first_name_kana"
-          name="first_name_kana"
-          class="input"
-          placeholder="例：シゲル"
-          value="{{ d.get('first_name_kana','') }}"
-        >
+        <input type="text" id="first_name_kana" name="first_name_kana" class="input"
+               placeholder="例：シゲル" value="{{ d.get('first_name_kana','') }}">
       </div>
     </div>
 
     <!-- 生年月日・性別 -->
     <div class="grid-2">
       <div>
-        <label class="label" for="birth_date">生年月日</label>
-        <input
-          type="date"
-          id="birth_date"
-          name="birth_date"
-          class="input"
-          required
-          value="{{ form_data.get('birth_date','') }}"
-        >
+        <label class="label" for="birth_date_y">生年月日</label>
+
+        <!-- 生年月日は日付ロール（年/月/日） -->
+        <div class="date-roll-row"
+             data-date-roll
+             data-target="birth_date"
+             data-mode="birth"
+             data-required="1">
+          <select class="input" id="birth_date_y" data-role="y" aria-label="年"></select>
+          <select class="input" id="birth_date_m" data-role="m" aria-label="月"></select>
+          <select class="input" id="birth_date_d" data-role="d" aria-label="日"></select>
+
+          <!-- サーバー送信用（YYYY-MM-DD） -->
+          <input type="hidden" id="birth_date" name="birth_date" value="{{ d.get('birth_date','') }}">
+        </div>
+
+        <div class="date-roll" id="birth_date_roll" aria-live="polite"></div>
       </div>
 
       <div>
@@ -131,22 +116,26 @@
       <div class="grid-2">
         <div>
           <label class="label" for="first_choice_date">日付</label>
+          <!-- ★カレンダー（type=date） -->
           <input
             type="date"
             id="first_choice_date"
             name="first_choice_date"
             class="input"
             required
-            value="{{ form_data.get('first_choice_date','') }}"
+            value="{{ d.get('first_choice_date','') }}"
           >
+          <div class="date-roll" id="first_choice_date_roll" aria-live="polite"></div>
         </div>
+
         <div>
           <label class="label" for="first_choice_time_slot">時間帯</label>
           <select id="first_choice_time_slot" name="first_choice_time_slot" class="input" required>
-            <option value="" {% if form_data.get('first_choice_time_slot','')=='' %}selected{% endif %}>選択してください</option>
-            <option value="am_early" {% if form_data.get('first_choice_time_slot','')=='am_early' %}selected{% endif %}>午前（早め）</option>
-            <option value="am_late" {% if form_data.get('first_choice_time_slot','')=='am_late' %}selected{% endif %}>午前（遅め）</option>
-            <option value="pm" {% if form_data.get('first_choice_time_slot','')=='pm' %}selected{% endif %}>午後</option>
+            <option value="" {% if d.get('first_choice_time_slot','')=='' %}selected{% endif %}>選択してください</option>
+            <option value="any" {% if d.get('first_choice_time_slot','')=='any' %}selected{% endif %}>特になし</option>
+            <option value="am_early" {% if d.get('first_choice_time_slot','')=='am_early' %}selected{% endif %}>午前（早め）</option>
+            <option value="am_late" {% if d.get('first_choice_time_slot','')=='am_late' %}selected{% endif %}>午前（遅め）</option>
+            <option value="pm" {% if d.get('first_choice_time_slot','')=='pm' %}selected{% endif %}>午後</option>
           </select>
         </div>
       </div>
@@ -158,21 +147,24 @@
       <div class="grid-2">
         <div>
           <label class="label" for="second_choice_date">日付</label>
+          <!-- ★カレンダー（type=date） -->
           <input
             type="date"
             id="second_choice_date"
             name="second_choice_date"
             class="input"
-            value="{{ form_data.get('second_choice_date','') }}"
+            value="{{ d.get('second_choice_date','') }}"
           >
+          <div class="date-roll" id="second_choice_date_roll" aria-live="polite"></div>
         </div>
+
         <div>
           <label class="label" for="second_choice_time_slot">時間帯</label>
           <select id="second_choice_time_slot" name="second_choice_time_slot" class="input">
-            <option value="" {% if form_data.get('second_choice_time_slot','')=='' %}selected{% endif %}>未選択</option>
-            <option value="am_early" {% if form_data.get('second_choice_time_slot','')=='am_early' %}selected{% endif %}>午前（早め）</option>
-            <option value="am_late" {% if form_data.get('second_choice_time_slot','')=='am_late' %}selected{% endif %}>午前（遅め）</option>
-            <option value="pm" {% if form_data.get('second_choice_time_slot','')=='pm' %}selected{% endif %}>午後</option>
+            <option value="" {% if d.get('second_choice_time_slot','')=='' %}selected{% endif %}>特になし</option>
+            <option value="am_early" {% if d.get('second_choice_time_slot','')=='am_early' %}selected{% endif %}>午前（早め）</option>
+            <option value="am_late" {% if d.get('second_choice_time_slot','')=='am_late' %}selected{% endif %}>午前（遅め）</option>
+            <option value="pm" {% if d.get('second_choice_time_slot','')=='pm' %}selected{% endif %}>午後</option>
           </select>
         </div>
       </div>
@@ -184,21 +176,24 @@
       <div class="grid-2">
         <div>
           <label class="label" for="third_choice_date">日付</label>
+          <!-- ★カレンダー（type=date） -->
           <input
             type="date"
             id="third_choice_date"
             name="third_choice_date"
             class="input"
-            value="{{ form_data.get('third_choice_date','') }}"
+            value="{{ d.get('third_choice_date','') }}"
           >
+          <div class="date-roll" id="third_choice_date_roll" aria-live="polite"></div>
         </div>
+
         <div>
           <label class="label" for="third_choice_time_slot">時間帯</label>
           <select id="third_choice_time_slot" name="third_choice_time_slot" class="input">
-            <option value="" {% if form_data.get('third_choice_time_slot','')=='' %}selected{% endif %}>未選択</option>
-            <option value="am_early" {% if form_data.get('third_choice_time_slot','')=='am_early' %}selected{% endif %}>午前（早め）</option>
-            <option value="am_late" {% if form_data.get('third_choice_time_slot','')=='am_late' %}selected{% endif %}>午前（遅め）</option>
-            <option value="pm" {% if form_data.get('third_choice_time_slot','')=='pm' %}selected{% endif %}>午後</option>
+            <option value="" {% if d.get('third_choice_time_slot','')=='' %}selected{% endif %}>特になし</option>
+            <option value="am_early" {% if d.get('third_choice_time_slot','')=='am_early' %}selected{% endif %}>午前（早め）</option>
+            <option value="am_late" {% if d.get('third_choice_time_slot','')=='am_late' %}selected{% endif %}>午前（遅め）</option>
+            <option value="pm" {% if d.get('third_choice_time_slot','')=='pm' %}selected{% endif %}>午後</option>
           </select>
         </div>
       </div>
@@ -213,4 +208,151 @@
     </p>
   </form>
 </section>
+
+<script>
+(function(){
+  const wd = ["日","月","火","水","木","金","土"];
+  const pad2 = (n) => String(n).padStart(2,"0");
+  const daysInMonth = (y, m) => new Date(y, m, 0).getDate();
+
+  function parseISO(v){
+    if(!v || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return null;
+    const [yy, mm, dd] = v.split("-").map(Number);
+    if(!yy || !mm || !dd) return null;
+    return {yy, mm, dd};
+  }
+
+  function setWeekdayText(outEl, iso){
+    if(!outEl) return;
+    if(!iso){ outEl.textContent = ""; return; }
+    const dt = new Date(iso + "T00:00:00");
+    if(isNaN(dt.getTime())){ outEl.textContent = ""; return; }
+    const y = dt.getFullYear();
+    const m = pad2(dt.getMonth()+1);
+    const d = pad2(dt.getDate());
+    const w = wd[dt.getDay()];
+    outEl.textContent = `${y}/${m}/${d}（${w}）`;
+  }
+
+  // ===== 生年月日：日付ロール（年/月/日） =====
+  function buildOptions(selectEl, options, placeholderText){
+    selectEl.innerHTML = "";
+    const ph = document.createElement("option");
+    ph.value = "";
+    ph.textContent = placeholderText;
+    selectEl.appendChild(ph);
+
+    options.forEach(({value, label})=>{
+      const op = document.createElement("option");
+      op.value = String(value);
+      op.textContent = label;
+      selectEl.appendChild(op);
+    });
+  }
+
+  function initBirthRoll(container){
+    const targetId = container.getAttribute("data-target"); // birth_date
+    const required = container.getAttribute("data-required") === "1";
+
+    const ySel = container.querySelector('[data-role="y"]');
+    const mSel = container.querySelector('[data-role="m"]');
+    const dSel = container.querySelector('[data-role="d"]');
+
+    const hidden = document.getElementById(targetId);
+    const rollText = document.getElementById(targetId + "_roll");
+
+    const initial = parseISO(hidden?.value || "");
+    const now = new Date();
+    const thisYear = now.getFullYear();
+
+    const yStart = thisYear - 120;
+    const yEnd = thisYear;
+
+    const yOpts = [];
+    for(let y=yEnd; y>=yStart; y--){
+      yOpts.push({value:y, label:`${y}年`});
+    }
+    buildOptions(ySel, yOpts, required ? "年" : "特になし");
+
+    const mOpts = [];
+    for(let m=1; m<=12; m++){
+      mOpts.push({value:m, label:`${m}月`});
+    }
+    buildOptions(mSel, mOpts, required ? "月" : "特になし");
+
+    function rebuildDays(){
+      const y = Number(ySel.value);
+      const m = Number(mSel.value);
+
+      if(!y || !m){
+        buildOptions(dSel, [], required ? "日" : "特になし");
+        return;
+      }
+
+      const last = daysInMonth(y, m);
+      const dOpts = [];
+      for(let d=1; d<=last; d++){
+        dOpts.push({value:d, label:`${d}日`});
+      }
+      buildOptions(dSel, dOpts, required ? "日" : "特になし");
+
+      const prev = Number(dSel.getAttribute("data-prev") || "");
+      if(prev && prev <= last) dSel.value = String(prev);
+    }
+
+    function syncHidden(){
+      const y = Number(ySel.value);
+      const m = Number(mSel.value);
+      const d = Number(dSel.value);
+
+      if(y && m && d){
+        const iso = `${y}-${pad2(m)}-${pad2(d)}`;
+        hidden.value = iso;
+        setWeekdayText(rollText, iso);
+      }else{
+        hidden.value = "";
+        setWeekdayText(rollText, "");
+      }
+    }
+
+    if(initial){
+      ySel.value = String(initial.yy);
+      mSel.value = String(initial.mm);
+      rebuildDays();
+      dSel.value = String(initial.dd);
+      dSel.setAttribute("data-prev", String(initial.dd));
+      syncHidden();
+    }else{
+      rebuildDays();
+      syncHidden();
+    }
+
+    ySel.addEventListener("change", ()=>{ rebuildDays(); syncHidden(); });
+    mSel.addEventListener("change", ()=>{ rebuildDays(); syncHidden(); });
+    dSel.addEventListener("change", ()=>{
+      dSel.setAttribute("data-prev", dSel.value || "");
+      syncHidden();
+    });
+  }
+
+  document.querySelectorAll("[data-date-roll]").forEach(initBirthRoll);
+
+  // ===== 予約希望日：カレンダー入力（type=date）→ 曜日表示だけ付ける =====
+  function bindDateInput(inputId, outId){
+    const el = document.getElementById(inputId);
+    const out = document.getElementById(outId);
+    if(!el || !out) return;
+
+    const refresh = ()=> setWeekdayText(out, el.value || "");
+    el.addEventListener("input", refresh);
+    el.addEventListener("change", refresh);
+    refresh();
+  }
+
+  bindDateInput("first_choice_date", "first_choice_date_roll");
+  bindDateInput("second_choice_date", "second_choice_date_roll");
+  bindDateInput("third_choice_date", "third_choice_date_roll");
+})();
+</script>
+
 {% endblock %}
