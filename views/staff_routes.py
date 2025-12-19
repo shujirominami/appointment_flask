@@ -102,10 +102,15 @@ def reservation_detail(reservation_id: int):
         status = request.form.get("status", "").strip()  # 'confirmed', 'need_reschedule', 'cancelled' など
         confirmed_datetime = request.form.get("confirmed_datetime", "").strip()
         staff_note = request.form.get("staff_note", "").strip()
-        handled_by = request.form.get("handled_by", "").strip()
+        handled_by = (current_user.name or "").strip()
 
         if not status:
             flash("ステータスを選択してください。", "error")
+            return render_template("staff/reservation_detail.html", reservation=reservation)
+
+        # confirmed のときは確定日時必須
+        if status == "confirmed" and not confirmed_datetime:
+            flash("ステータスを「確定」にする場合、確定日時の入力が必要です。", "error")
             return render_template("staff/reservation_detail.html", reservation=reservation)
 
         # 予約ステータスの更新
@@ -187,5 +192,8 @@ def reservation_detail(reservation_id: int):
                 flash("再入力依頼メールの送信に失敗しました（ログを確認してください）。", "error")
                 # ここでreturnしない（DB更新は成功しているため）
 
-    # GET の場合：詳細画面を表示
+        flash("更新しました。", "success")
+        return redirect(url_for("staff.reservation_detail", reservation_id=reservation_id))
+
+    # GET：詳細画面を表示（ここでredirectしない）
     return render_template("staff/reservation_detail.html", reservation=reservation)
