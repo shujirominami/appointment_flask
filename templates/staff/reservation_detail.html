@@ -71,7 +71,7 @@
     </div>
 
     <div class="form-row">
-      <label for="confirmed_datetime">確定日時（任意）</label>
+      <label for="confirmed_datetime">確定日時（確定の場合は必須）</label>
       <input
         id="confirmed_datetime"
         name="confirmed_datetime"
@@ -83,15 +83,17 @@
     </div>
 
     <div class="form-row">
-      <label for="handled_by">対応者（任意）</label>
+      <label for="handled_by">対応者（ログイン者・必須）</label>
       <input
-        id="handled_by"
-        name="handled_by"
-        type="text"
-        placeholder="例：南、榎本 など"
-        value="{{ reservation.handled_by or '' }}"
-      >
+    id="handled_by"
+    name="handled_by"
+    type="text"
+    value="{{ current_user.name }}"
+    readonly
+    >
+      <small class="hint">対応者はログイン者の名前が自動で記録されます。</small>
     </div>
+
 
     <div class="form-row">
       <label for="staff_note">職員メモ（任意）</label>
